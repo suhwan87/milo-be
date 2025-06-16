@@ -2,6 +2,8 @@ package com.example.milo_be.domain.entity;
 
 import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,7 +29,7 @@ public class RolePlayLog {
     @Column(name = "RESPONDER", nullable = false, columnDefinition = "TEXT")
     private String responder;
 
-    @Column(name = "CREATED_AT", nullable = false)
+    @CreationTimestamp
+    @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }
-

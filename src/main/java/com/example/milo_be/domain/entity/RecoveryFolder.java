@@ -1,34 +1,31 @@
 package com.example.milo_be.domain.entity;
 
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "recovery_sentence_TB")
+@Table(name = "recovery_folder_TB",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"USER_ID", "FOLDER_NAME"})})
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecoverySentence {
+public class RecoveryFolder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SENTENCE_ID")
-    private Long sentenceId;
+    @Column(name = "FOLDER_ID")
+    private Long folderId;
 
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "FOLDER_ID", nullable = false)
-    private RecoveryFolder folder;
-
-    @Column(name = "CONTENT", nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "FOLDER_NAME", nullable = false, length = 100)
+    private String folderName;
 
     @CreationTimestamp
     @Column(name = "CREATED_AT", nullable = false, updatable = false)

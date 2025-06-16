@@ -2,6 +2,8 @@ package com.example.milo_be.domain.entity;
 
 import lombok.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,13 +27,7 @@ public class User {
     @Column(name = "EMAIL", nullable = false, length = 100, unique = true)
     private String email;
 
-    @Column(name = "IS_DELETED", nullable = false)
-    private Boolean isDeleted;
-
-    @Column(name = "WITHDRAWN_AT")
-    private LocalDateTime withdrawnAt;
-
-    @Column(name = "CREATED_AT", nullable = false)
+    @CreationTimestamp
+    @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 }
-
