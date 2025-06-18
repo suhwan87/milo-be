@@ -54,5 +54,15 @@ public class UserService {
         // 로그인 성공 시 JWT 토큰 발급
         return jwtUtil.generateToken(userId);
     }
+
+    /**
+     * 회원 삭제 처리
+     */
+    public void deleteUser(String userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
+        userRepository.deleteById(userId);
+    }
 }
 

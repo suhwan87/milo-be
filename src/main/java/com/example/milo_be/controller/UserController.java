@@ -1,9 +1,11 @@
 package com.example.milo_be.controller;
 
+import com.example.milo_be.JWT.JwtUtil;
 import com.example.milo_be.dto.LoginRequestDto;
 import com.example.milo_be.dto.UserRequestDto;
 import com.example.milo_be.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     /**
      * 🔐 회원가입 요청
@@ -45,6 +48,19 @@ public class UserController {
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String token) {
+        try {
+            String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+            String userId = jwtUtil.getUserIdFromToken(jwt);
+            userService.deleteUser(userId);
+            return ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("회원탈퇴 실패: " + e.getMessage());
+        }
     }
 
 }
