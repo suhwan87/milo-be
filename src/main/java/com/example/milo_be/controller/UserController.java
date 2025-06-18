@@ -1,8 +1,7 @@
 package com.example.milo_be.controller;
 
 import com.example.milo_be.JWT.JwtUtil;
-import com.example.milo_be.dto.LoginRequestDto;
-import com.example.milo_be.dto.UserRequestDto;
+import com.example.milo_be.dto.*;
 import com.example.milo_be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,7 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     /**
-     * 🔐 회원가입 요청
+     * 회원가입 요청
      */
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRequestDto dto) {
@@ -30,8 +29,7 @@ public class UserController {
     }
 
     /**
-     * ✅ 아이디 중복 확인 요청
-     * 프론트: /api/users/check-id?id=test123
+     * 아이디 중복 확인 요청
      */
     @GetMapping("/check-id")
     public ResponseEntity<Boolean> checkUserId(@RequestParam String id) {
@@ -40,7 +38,7 @@ public class UserController {
     }
 
     /**
-     * 🔓 로그인 요청
+     * 로그인 요청
      */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto loginDto) {
@@ -51,7 +49,7 @@ public class UserController {
     }
 
     /**
-     * 🗑️ 회원탈퇴 요청 (비밀번호 확인 포함)
+     * 회원탈퇴 요청 (비밀번호 확인 포함)
      */
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(
@@ -59,14 +57,10 @@ public class UserController {
             @RequestBody Map<String, String> requestBody
     ) {
         try {
-            // 1. JWT에서 userId 추출
             String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
             String userId = jwtUtil.getUserIdFromToken(jwt);
-
-            // 2. 요청 본문에서 비밀번호 추출
             String password = requestBody.get("password");
 
-            // 3. 비밀번호 검증 후 삭제
             boolean deleted = userService.deleteUserWithPassword(userId, password);
             if (deleted) {
                 return ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
@@ -81,4 +75,62 @@ public class UserController {
         }
     }
 
+    /**
+     * 닉네임 변경 요청
+     */
+    @PatchMapping("/nickname")
+    public ResponseEntity<String> updateNickname(
+            @RequestHeader("Authorization") String token,
+            @RequestBody NicknameRequestDto requestDto
+    ) {
+        try {
+            String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+            String userId = jwtUtil.getUserIdFromToken(jwt);
+            String newNickname = requestDto.getNickname();  // ✅ DTO에서 가져오기
+
+            userService.updateNickname(userId, newNickname);
+            return ResponseEntity.ok("닉네임이 성공적으로 변경되었습니다.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("닉네임 변경 실패: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 회원 정보 요청
+     */
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getUserInfo(@RequestHeader("Authorization") String token) {
+        try {
+            String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+            String userId = jwtUtil.getUserIdFromToken(jwt);
+            UserResponseDto userInfo = userService.getUserInfo(userId);
+            return ResponseEntity.ok(userInfo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    /**
+     * 회원 비밀번호 변경 요청
+     */
+    @PatchMapping("/password")
+    public ResponseEntity<String> changePassword(
+            @RequestHeader("Authorization") String token,
+            @RequestBody PasswordRequestDto dto
+    ) {
+        try {
+            String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+            String userId = jwtUtil.getUserIdFromToken(jwt);
+
+            userService.changePassword(userId, dto.getCurrentPassword(), dto.getNewPassword());
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("비밀번호 변경 실패: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+        }
+    }
 }

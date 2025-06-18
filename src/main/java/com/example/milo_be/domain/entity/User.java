@@ -18,9 +18,12 @@ public class User {
     @Column(name = "USER_ID", length = 50)
     private String userId;
 
+    @Setter
     @Column(name = "PASSWORD", nullable = false, length = 100)
     private String password;
 
+    // ✅ 닉네임 변경용 setter 추가
+    @Setter
     @Column(name = "NICKNAME", nullable = false, length = 50)
     private String nickname;
 
