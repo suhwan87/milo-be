@@ -1,10 +1,14 @@
 package com.example.milo_be.controller;
 
+import com.example.milo_be.dto.LoginRequestDto;
 import com.example.milo_be.dto.UserRequestDto;
 import com.example.milo_be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -31,4 +35,16 @@ public class UserController {
         boolean isAvailable = userService.isUserIdAvailable(id);
         return ResponseEntity.ok(isAvailable);
     }
+
+    /**
+     *  로그인 요청
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto loginDto) {
+        String token = userService.login(loginDto.getUserId(), loginDto.getPassword());
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
+    }
+
 }
