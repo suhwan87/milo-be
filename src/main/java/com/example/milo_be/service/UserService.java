@@ -5,6 +5,7 @@ import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.dto.UserRequestDto;
 import com.example.milo_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,5 +70,12 @@ public class UserService {
 
         userRepository.delete(user);
         return true;
+    }
+
+
+    public String getPromptType(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
+        return user.getEmotionPrompt() == 0 ? "emotional" : "practical";
     }
 }

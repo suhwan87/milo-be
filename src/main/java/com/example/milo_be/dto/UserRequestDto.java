@@ -14,4 +14,5 @@ public class UserRequestDto {
     private String password;
     private String nickname;
     private String email;
+    private Integer emotionPrompt;
 }
