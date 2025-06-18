@@ -3,6 +3,7 @@ package com.example.milo_be.service;
 import com.example.milo_be.JWT.JwtUtil;
 import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.dto.UserRequestDto;
+import com.example.milo_be.dto.UserResponseDto;
 import com.example.milo_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -62,12 +63,47 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        // 비밀번호 확인
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return false;
         }
 
         userRepository.delete(user);
         return true;
+    }
+
+    /**
+     * 닉네임 변경
+     */
+    public void updateNickname(String userId, String newNickname) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+
+        user.setNickname(newNickname);
+        userRepository.save(user);
+    }
+
+    /**
+     * 현재 로그인한 사용자 정보 반환 (GET /api/users/me)
+     */
+    public UserResponseDto getUserInfo(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+        return new UserResponseDto(user.getUserId(), user.getNickname(), user.getEmail());
+    }
+
+    /**
+     * 회원 비밀번호 변경
+     */
+    public void changePassword(String userId, String currentPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }
