@@ -110,7 +110,7 @@ public class UserService {
     }
 
     /**
-     * 회원 챗봇 실용형/감정형
+     * 회원 챗봇 감정형/실용형
      */
     public String getPromptType(String userId) {
         User user = userRepository.findById(userId)
