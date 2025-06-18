@@ -13,15 +13,10 @@ public class ChatDto {
         private String message;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     public static class ChatResponse {
         private String output;
-
-        public String getOutput() {
-            return output;
-        }
-
-        public void setOutput(String output) {
-            this.output = output;
-        }
     }
 }
