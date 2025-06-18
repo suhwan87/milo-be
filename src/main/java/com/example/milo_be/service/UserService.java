@@ -31,5 +31,12 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    // 아이디 중복
+    // UserService.java
+    public boolean isUserIdAvailable(String userId) {
+        return !userRepository.existsById(userId); // true면 사용 가능
+    }
+
 }
 
