@@ -34,14 +34,15 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // 아이디 중복
-    // UserService.java
+    /**
+     * 아이디 중복 체크
+     */
     public boolean isUserIdAvailable(String userId) {
-        return !userRepository.existsById(userId); // true면 사용 가능
+        return !userRepository.existsById(userId);
     }
 
     /**
-     * 로그인 처리
+     * 로그인 처리 및 JWT 발급
      */
     public String login(String userId, String password) {
         User user = userRepository.findById(userId)
@@ -51,18 +52,22 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        // 로그인 성공 시 JWT 토큰 발급
         return jwtUtil.generateToken(userId);
     }
 
     /**
-     * 회원 삭제 처리
+     * 회원탈퇴 (비밀번호 확인 포함)
      */
-    public void deleteUser(String userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+    public boolean deleteUserWithPassword(String userId, String password) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return false;
         }
-        userRepository.deleteById(userId);
+
+        userRepository.delete(user);
+        return true;
     }
 }
-

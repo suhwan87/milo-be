@@ -40,7 +40,7 @@ public class UserController {
     }
 
     /**
-     *  로그인 요청
+     * 🔓 로그인 요청
      */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto loginDto) {
@@ -50,13 +50,31 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 🗑️ 회원탈퇴 요청 (비밀번호 확인 포함)
+     */
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<String> deleteUser(
+            @RequestHeader("Authorization") String token,
+            @RequestBody Map<String, String> requestBody
+    ) {
         try {
+            // 1. JWT에서 userId 추출
             String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
             String userId = jwtUtil.getUserIdFromToken(jwt);
-            userService.deleteUser(userId);
-            return ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
+
+            // 2. 요청 본문에서 비밀번호 추출
+            String password = requestBody.get("password");
+
+            // 3. 비밀번호 검증 후 삭제
+            boolean deleted = userService.deleteUserWithPassword(userId, password);
+            if (deleted) {
+                return ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("비밀번호가 일치하지 않습니다.");
+            }
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("회원탈퇴 실패: " + e.getMessage());
