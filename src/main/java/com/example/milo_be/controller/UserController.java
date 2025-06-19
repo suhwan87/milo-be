@@ -41,12 +41,11 @@ public class UserController {
      * 로그인 요청
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequestDto loginDto) {
-        String token = userService.login(loginDto.getUserId(), loginDto.getPassword());
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginDto) {
+        LoginResponseDto response = userService.login(loginDto.getUserId(), loginDto.getPassword());
         return ResponseEntity.ok(response);
     }
+
 
     /**
      * 회원탈퇴 요청 (비밀번호 확인 포함)

@@ -1,6 +1,7 @@
 package com.example.milo_be.service;
 
-import com.example.milo_be.dto.RoleCharacterDto;
+import com.example.milo_be.domain.entity.RoleCharacter;
+import com.example.milo_be.repository.RoleCharacterRepository;
 import com.example.milo_be.dto.RolePlayRequestDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,47 +17,33 @@ import org.springframework.web.client.RestTemplate;
 public class FastApiService {
 
     private final RestTemplate restTemplate;
+    private final RoleCharacterRepository roleCharacterRepository;
 
-    private static final String BASE_URL = "http://192.168.219.48:8000/api/roleplay";
-
-    /**
-     * 역할 정보 FastAPI에 전달 (assign)
-     */
-    public void assignCharacterToFastAPI(RoleCharacterDto dto) {
-        String url = BASE_URL + "/assign";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<RoleCharacterDto> request = new HttpEntity<>(dto, headers);
-
-        try {
-            restTemplate.postForEntity(url, request, String.class);
-            log.info("✅ 역할 정보 FastAPI로 전달 완료");
-        } catch (Exception e) {
-            log.error("❌ 역할 정보 전달 실패", e);
-        }
-    }
+    private static final String CHAT_URL = "http://192.168.219.48:8000/api/roleplay/chat";
 
     /**
-     * 역할 기반 대화 요청 (chat)
+     * ✅ 사용자 ID로 캐릭터 ID 조회 → FastAPI로 전달
      */
-    public String sendChatToFastAPI(String userId, Long characterId, String input) {
-        String url = BASE_URL + "/chat";
+    public String sendChatToFastAPI(String userId, String input) {
+        // 1. 역할 ID 조회 (1:1 관계 가정)
+        RoleCharacter character = roleCharacterRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new IllegalStateException("등록된 역할이 없습니다."));
 
+        // 2. FastAPI에 전달할 DTO 구성
         RolePlayRequestDto dto = new RolePlayRequestDto();
         dto.setUser_id(userId);
-        dto.setCharacter_id(characterId);
+        dto.setCharacter_id(character.getCharacterId());
         dto.setInput(input);
 
+        // 3. HTTP 요청
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
         HttpEntity<RolePlayRequestDto> request = new HttpEntity<>(dto, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(CHAT_URL, request, String.class);
 
+            // 응답 파싱
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.getBody());
             JsonNode outputNode = root.get("output");

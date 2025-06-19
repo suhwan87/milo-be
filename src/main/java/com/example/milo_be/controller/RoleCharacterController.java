@@ -18,4 +18,10 @@ public class RoleCharacterController {
         Long characterId = roleCharacterService.save(dto);
         return ResponseEntity.ok(characterId);
     }
+
+    @GetMapping("/{userId}/exists")
+    public ResponseEntity<Boolean> checkIfCharacterExists(@PathVariable String userId) {
+        boolean exists = roleCharacterService.existsByUserId(userId);
+        return ResponseEntity.ok(exists);
+    }
 }
