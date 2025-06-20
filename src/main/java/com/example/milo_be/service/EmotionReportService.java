@@ -2,6 +2,7 @@ package com.example.milo_be.service;
 
 import com.example.milo_be.domain.entity.DailyEmotionReport;
 import com.example.milo_be.domain.entity.User;
+import com.example.milo_be.dto.DayEmotionDto;
 import com.example.milo_be.dto.EmotionReportResponseDto;
 import com.example.milo_be.repository.EmotionReportRepository;
 import com.example.milo_be.repository.UserRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -48,4 +50,18 @@ public class EmotionReportService {
 
         return reportRepository.findReportDaysByUserAndMonth(user, start, end);
     }
+
+    // src/main/java/com/example/milo_be/service/EmotionReportService.java
+    public List<DayEmotionDto> getDayEmotionInMonth(String token, YearMonth ym) {
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("유효하지 않은 사용자입니다."));
+
+        LocalDate start = ym.atDay(1);           // 해당 달 1일
+        LocalDate end   = ym.atEndOfMonth();     // 해당 달 마지막 날
+
+        return reportRepository
+                .findDayAndEmotionByUserAndMonth(user, start, end); // 내림차순 이미 적용
+    }
+
 }

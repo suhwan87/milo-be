@@ -1,5 +1,6 @@
 package com.example.milo_be.controller;
 
+import com.example.milo_be.dto.DayEmotionDto;
 import com.example.milo_be.dto.EmotionReportResponseDto;
 import com.example.milo_be.service.EmotionReportService;
 import lombok.RequiredArgsConstructor;
@@ -58,4 +59,25 @@ public class EmotionReportController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("월간 리포트 조회 중 서버 오류가 발생했습니다.");
         }
     }
+
+    // src/main/java/com/example/milo_be/controller/EmotionReportController.java
+    /**
+     * [GET] 특정 월의 날짜 + 대표 감정 목록 조회
+     *  ex) /api/report/records?month=2025-06
+     */
+    @GetMapping("/records")
+    public ResponseEntity<?> getDayEmotionRecords(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("month") @DateTimeFormat(pattern = "yyyy-MM") YearMonth month) {
+        try {
+            String jwt = token.replace("Bearer", "").trim();
+            List<DayEmotionDto> list = reportService.getDayEmotionInMonth(jwt, month);
+            return ResponseEntity.ok(list);          // 200 OK, JSON 배열
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("월간 기록 조회 중 오류가 발생했습니다.");
+        }
+    }
+
 }
