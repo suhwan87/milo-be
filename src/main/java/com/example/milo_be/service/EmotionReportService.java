@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -21,10 +22,10 @@ public class EmotionReportService {
     private final JwtUtil jwtUtil;
 
     /**
-     * 특정 날짜의 감정 리포트를 반환하는 서비스 로직
+     * [1] 특정 날짜의 감정 리포트 조회
      */
     public EmotionReportResponseDto.DailyReport getDailyReport(String token, LocalDate date) {
-        String userId = jwtUtil.getUserIdFromToken(token); // 토큰에서 userId 추출
+        String userId = jwtUtil.getUserIdFromToken(token);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("유효하지 않은 사용자입니다."));
 
@@ -32,5 +33,19 @@ public class EmotionReportService {
                 .orElseThrow(() -> new NoSuchElementException("해당 날짜의 리포트가 존재하지 않습니다."));
 
         return EmotionReportResponseDto.DailyReport.from(report);
+    }
+
+    /**
+     * [2] 특정 월에 리포트가 존재하는 날짜 목록(day 숫자) 조회
+     */
+    public List<Integer> getReportDaysInMonth(String token, int year, int month) {
+        String userId = jwtUtil.getUserIdFromToken(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("유효하지 않은 사용자입니다."));
+
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        return reportRepository.findReportDaysByUserAndMonth(user, start, end);
     }
 }
