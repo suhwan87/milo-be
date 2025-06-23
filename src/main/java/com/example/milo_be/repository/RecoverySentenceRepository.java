@@ -10,7 +10,6 @@ import java.util.List;
 public interface RecoverySentenceRepository extends JpaRepository<RecoverySentence, Long> {
     List<RecoverySentence> findAllByFolderAndUser(RecoveryFolder folder, User user);
     void deleteAllByFolder(RecoveryFolder folder); // 회복 문장 전체 삭제
-    void deleteByFolderAndContent(RecoveryFolder folder, String content); // 회복 문장 한개 삭제
     List<RecoverySentence> findAllByUserAndContent(User user, String content);
     int countByFolder(RecoveryFolder folder);
 }

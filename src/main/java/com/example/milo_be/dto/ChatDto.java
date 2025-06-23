@@ -20,12 +20,4 @@ public class ChatDto {
     public static class ChatResponse {
         private String output;
     }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class ReportRequestDto {
-        private String user_id;
-    }
 }
