@@ -34,6 +34,7 @@ public class User {
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Setter
     @Column(name = "EMOTION_PROMPT")
     private Integer emotionPrompt;  // 0 = 실용형, 1 = 감정형
 }

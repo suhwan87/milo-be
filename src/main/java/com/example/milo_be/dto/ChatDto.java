@@ -1,5 +1,6 @@
 package com.example.milo_be.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,13 @@ public class ChatDto {
     @NoArgsConstructor
     public static class ChatResponse {
         private String output;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class ReportRequestDto {
+        private String user_id;
     }
 }
