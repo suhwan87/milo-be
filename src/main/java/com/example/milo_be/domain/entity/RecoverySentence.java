@@ -27,6 +27,7 @@ public class RecoverySentence {
     @JoinColumn(name = "FOLDER_ID", nullable = false)
     private RecoveryFolder folder;
 
+    @Setter
     @Column(name = "CONTENT", nullable = false, columnDefinition = "TEXT")
     private String content;
 
