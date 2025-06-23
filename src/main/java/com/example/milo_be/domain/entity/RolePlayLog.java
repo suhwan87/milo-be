@@ -19,12 +19,10 @@ public class RolePlayLog {
     @Column(name = "ROLE_CHAT_ID")
     private Long roleChatId;
 
-    // ✅ 회원 ID: users_TB 테이블과 다대일 관계 (FK)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    // ✅ 역할 ID: role_character_TB 테이블과 다대일 관계 (FK)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CHARACTER_ID", nullable = false)
     private RoleCharacter roleCharacter;
