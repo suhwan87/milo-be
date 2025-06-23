@@ -31,6 +31,7 @@ public class UserService {
                 .userId(dto.getUserId())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .nickname(dto.getNickname())
+                .emotionPrompt(dto.getEmotionPrompt() != null ? dto.getEmotionPrompt() : 0)
                 .email(dto.getEmail())
                 .build();
 
@@ -112,11 +113,19 @@ public class UserService {
     }
 
     /**
-     * 회원 챗봇 감정형/실용형
+     * 회원 챗봇 공감형/조언형
      */
     public String getPromptType(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
         return user.getEmotionPrompt() == 0 ? "emotional" : "practical";
+    }
+
+    public void updatePrompt(String userId, int promptValue) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다: " + userId));
+
+        user.setEmotionPrompt(promptValue);
+        userRepository.save(user);
     }
 }
