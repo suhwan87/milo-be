@@ -1,10 +1,14 @@
 package com.example.milo_be.service;
 
 import com.example.milo_be.JWT.JwtUtil;
+import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.dto.ChatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
@@ -16,47 +20,8 @@ import java.util.Map;
 public class ChatService {
 
     private final JwtUtil jwtUtil;
-    private final CharStyleService promptService;
+    private final ChatStyleService chatStyleService;
     private final RestTemplate restTemplate = new RestTemplate();
-
-    /**
-     * 채팅
-     */
-    public ChatDto.ChatResponse processChat(String token, String message) {
-        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
-        String userId = jwtUtil.getUserIdFromToken(jwt);
-        String promptType = promptService.getPromptType(userId);
-
-        Map<String, String> payload = new HashMap<>();
-        payload.put("user_id", userId);
-        payload.put("input", message);
-        payload.put("persona", promptType);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, String>> entity = new HttpEntity<>(payload, headers);
-
-        String fastApiUrl = "http://192.168.219.48:8000/api/chat/";
-
-        try {
-            ResponseEntity<ChatDto.ChatResponse> response =
-                    restTemplate.postForEntity(fastApiUrl, entity, ChatDto.ChatResponse.class);
-
-            if (response.getBody() == null) {
-                throw new RuntimeException("FastAPI 응답 body가 null입니다.");
-            }
-
-            // ✅ 필요한 핵심 로그
-            System.out.println("📤 [Chat 요청] userId: " + userId + ", message: " + message);
-            System.out.println("🤖 [FastAPI 응답] " + response.getBody().getOutput());
-
-            return response.getBody();
-
-        } catch (Exception e) {
-            System.out.println("❌ [FastAPI 오류] " + e.getMessage());
-            throw new RuntimeException("FastAPI 오류: " + e.getMessage());
-        }
-    }
 
     /**
      * 채팅 첫 진입 인사
@@ -84,7 +49,43 @@ public class ChatService {
         }
     }
 
+    /**
+     * 채팅
+     */
+    public ChatDto.ChatResponse processChat(String token, String message) {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+        String userId = jwtUtil.getUserIdFromToken(jwt);
+        String promptType = chatStyleService.getPromptType(userId);
 
+        Map<String, String> payload = new HashMap<>();
+        payload.put("user_id", userId);
+        payload.put("input", message);
+        payload.put("persona", promptType);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Map<String, String>> entity = new HttpEntity<>(payload, headers);
+
+        String fastApiUrl = "http://192.168.219.48:8000/api/chat/";
+
+        try {
+            ResponseEntity<ChatDto.ChatResponse> response =
+                    restTemplate.postForEntity(fastApiUrl, entity, ChatDto.ChatResponse.class);
+
+            if (response.getBody() == null) {
+                throw new RuntimeException("FastAPI 응답 body가 null입니다.");
+            }
+
+            // ✅ 필요한 핵심 로그
+            System.out.println("📤 [Chat 요청] userId: " + userId + ", message: " + message);
+            System.out.println("🤖 [FastAPI 응답] " + response.getBody().getOutput());
+
+            return response.getBody();
+
+        } catch (Exception e) {
+            throw new RuntimeException("❌ FastAPI 예외: " + e.getMessage());
+        }
+    }
 
     /**
      * 채팅 종료 시 리포트 요청

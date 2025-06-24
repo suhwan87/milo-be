@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CharStyleRequestDto {
+public class ChatStyleRequestDto {
     private Integer emotionPrompt;
 }

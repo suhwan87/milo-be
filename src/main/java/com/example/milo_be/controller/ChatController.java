@@ -14,6 +14,20 @@ public class ChatController {
     private final ChatService chatService;
 
     /**
+     * 채팅 첫 진입 인사
+     */
+    @GetMapping("/chat/init")
+    public ResponseEntity<?> getInitialGreeting(@RequestParam("user_id") String userId) {
+        try {
+            ChatDto.ChatResponse response = chatService.getInitialGreeting(userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("초기 인사 메시지 호출 실패: " + e.getMessage());
+        }
+    }
+
+    /**
      * 채팅
      */
     @PostMapping("/chat/send")
@@ -26,20 +40,6 @@ public class ChatController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("FastAPI 오류: " + e.getMessage());
-        }
-    }
-
-    /**
-     * 채팅 첫 진입 인사
-     */
-    @GetMapping("/chat/init")
-    public ResponseEntity<?> getInitialGreeting(@RequestParam("user_id") String userId) {
-        try {
-            ChatDto.ChatResponse response = chatService.getInitialGreeting(userId);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("초기 인사 메시지 호출 실패: " + e.getMessage());
         }
     }
 
