@@ -80,6 +80,33 @@ public class ChatService {
         }
     }
 
+    /**
+     * 채팅 첫 진입 인사
+     */
+    public ChatDto.ChatResponse getInitialGreeting(String userId) {
+        String fastApiUrl = "http://192.168.219.48:8000/api/chat/init?user_id=" + userId;
+        System.out.println("🌐 [getInitialGreeting] FastAPI GET 요청 → " + fastApiUrl);
+
+        try {
+            ResponseEntity<ChatDto.ChatResponse> response =
+                    restTemplate.getForEntity(fastApiUrl, ChatDto.ChatResponse.class);
+
+            if (response.getBody() == null) {
+                System.out.println("❗ [getInitialGreeting] FastAPI 응답 body가 null입니다.");
+                throw new RuntimeException("FastAPI 응답 body가 null입니다.");
+            }
+
+            System.out.println("🤖 [getInitialGreeting] FastAPI 응답 메시지: " + response.getBody().getOutput());
+            return response.getBody();
+
+        } catch (Exception e) {
+            System.out.println("💥 [getInitialGreeting] FastAPI 요청 실패");
+            e.printStackTrace();
+            throw new RuntimeException("FastAPI 오류: " + e.getMessage());
+        }
+    }
+
+
 
     /**
      * 채팅 종료 및 리포트 요청
