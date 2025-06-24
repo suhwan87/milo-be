@@ -131,4 +131,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
         }
     }
+
+    @GetMapping("/status")
+    public ResponseEntity<UserReportStatusDto> getUserStatus(@RequestHeader("Authorization") String token) {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+        String userId = jwtUtil.getUserIdFromToken(jwt);
+        UserReportStatusDto status = userService.getUserReportStatus(userId);
+        return ResponseEntity.ok(status);
+    }
 }

@@ -20,6 +20,12 @@ public interface EmotionReportRepository extends JpaRepository<DailyEmotionRepor
      */
     Optional<DailyEmotionReport> findByUserAndDate(User user, LocalDate date);
 
+    // ✅ 리포트를 한 번이라도 쓴 적이 있는가
+    boolean existsByUser(User user);
+
+    // ✅ 오늘 리포트를 썼는가
+    boolean existsByUserAndDate(User user, LocalDate date);
+
     /**
      * ✅ 사용자별 특정 월의 리포트 날짜(day 숫자) 목록 조회
      */
