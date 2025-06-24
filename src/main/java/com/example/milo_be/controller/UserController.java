@@ -6,6 +6,8 @@ import com.example.milo_be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -135,6 +137,15 @@ public class UserController {
     /**
      * 회원 챗봇 공감형/조언형
      */
+
+    @GetMapping("/prompt")
+    public ResponseEntity<String> getUserPrompt(@RequestHeader("Authorization") String token) {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+        String userId = jwtUtil.getUserIdFromToken(jwt);
+        String promptType = userService.getPromptType(userId);
+        return ResponseEntity.ok(promptType);
+    }
+
     @PutMapping("/prompt")
     public ResponseEntity<?> updatePrompt(
             @RequestHeader("Authorization") String token,
@@ -147,5 +158,4 @@ public class UserController {
         userService.updatePrompt(userId, promptValue);
         return ResponseEntity.ok().build();
     }
-
 }
