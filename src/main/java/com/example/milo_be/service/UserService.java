@@ -7,7 +7,6 @@ import com.example.milo_be.dto.UserRequestDto;
 import com.example.milo_be.dto.UserResponseDto;
 import com.example.milo_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -109,23 +108,6 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-    }
-
-    /**
-     * 회원 챗봇 공감형/조언형
-     */
-    public String getPromptType(String userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
-        return user.getEmotionPrompt() == 0 ? "emotional" : "practical";
-    }
-
-    public void updatePrompt(String userId, int promptValue) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다: " + userId));
-
-        user.setEmotionPrompt(promptValue);
         userRepository.save(user);
     }
 }

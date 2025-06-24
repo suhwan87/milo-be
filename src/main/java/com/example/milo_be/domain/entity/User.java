@@ -36,5 +36,5 @@ public class User {
 
     @Setter
     @Column(name = "EMOTION_PROMPT")
-    private Integer emotionPrompt;  // 0 = 실용형, 1 = 감정형
+    private Integer emotionPrompt;  // 0 = 공감형, 1 = 조언형
 }

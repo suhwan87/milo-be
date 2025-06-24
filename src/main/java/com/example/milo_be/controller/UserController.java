@@ -131,29 +131,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
         }
     }
-
-    /**
-     * 회원 챗봇 공감형/조언형
-     */
-
-    @GetMapping("/prompt")
-    public ResponseEntity<String> getUserPrompt(@RequestHeader("Authorization") String token) {
-        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
-        String userId = jwtUtil.getUserIdFromToken(jwt);
-        String promptType = userService.getPromptType(userId);
-        return ResponseEntity.ok(promptType);
-    }
-
-    @PutMapping("/prompt")
-    public ResponseEntity<?> updatePrompt(
-            @RequestHeader("Authorization") String token,
-            @RequestBody Map<String, Integer> request
-    ) {
-        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
-        String userId = jwtUtil.getUserIdFromToken(jwt);
-        int promptValue = request.get("prompt");
-
-        userService.updatePrompt(userId, promptValue);
-        return ResponseEntity.ok().build();
-    }
 }
