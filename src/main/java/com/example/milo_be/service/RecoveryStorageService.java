@@ -3,7 +3,6 @@ package com.example.milo_be.service;
 import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.domain.entity.RecoveryFolder;
 import com.example.milo_be.domain.entity.RecoverySentence;
-import com.example.milo_be.dto.RecoveryStorageRequestDto;
 import com.example.milo_be.dto.RecoveryStorageResponseDto;
 import com.example.milo_be.repository.RecoveryFolderRepository;
 import com.example.milo_be.repository.RecoverySentenceRepository;
