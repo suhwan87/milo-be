@@ -132,6 +132,9 @@ public class UserController {
         }
     }
 
+    /**
+     * 사용자 리포트 상태 확인 (신규가입자, 리포트 경험, 오늘 리포트 여부)
+     */
     @GetMapping("/status")
     public ResponseEntity<UserReportStatusDto> getUserStatus(@RequestHeader("Authorization") String token) {
         String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
