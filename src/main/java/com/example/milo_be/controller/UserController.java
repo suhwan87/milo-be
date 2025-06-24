@@ -156,4 +156,12 @@ public class UserController {
         userService.updatePrompt(userId, promptValue);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/status")
+    public ResponseEntity<UserReportStatusDto> getUserStatus(@RequestHeader("Authorization") String token) {
+        String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+        String userId = jwtUtil.getUserIdFromToken(jwt);
+        UserReportStatusDto status = userService.getUserReportStatus(userId);
+        return ResponseEntity.ok(status);
+    }
 }

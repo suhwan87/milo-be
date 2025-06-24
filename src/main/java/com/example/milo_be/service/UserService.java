@@ -3,13 +3,17 @@ package com.example.milo_be.service;
 import com.example.milo_be.JWT.JwtUtil;
 import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.dto.LoginResponseDto;
+import com.example.milo_be.dto.UserReportStatusDto;
 import com.example.milo_be.dto.UserRequestDto;
 import com.example.milo_be.dto.UserResponseDto;
+import com.example.milo_be.repository.EmotionReportRepository;
 import com.example.milo_be.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmotionReportRepository reportRepository; // ✅ 추가
 
     /**
      * 회원가입 처리
@@ -127,5 +132,20 @@ public class UserService {
 
         user.setEmotionPrompt(promptValue);
         userRepository.save(user);
+    }
+
+    /**
+     * 사용자 리포트 상태 확인 (신규가입자, 리포트 경험, 오늘 리포트 여부)
+     */
+    public UserReportStatusDto getUserReportStatus(String userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
+        LocalDate today = LocalDate.now();
+        boolean isNewUser = user.getCreatedAt().toLocalDate().isEqual(today);
+        boolean hasAnyReport = reportRepository.existsByUser(user);
+        boolean hasTodayReport = reportRepository.existsByUserAndDate(user, today);
+
+        return new UserReportStatusDto(isNewUser, hasAnyReport, hasTodayReport);
     }
 }
