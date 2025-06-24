@@ -40,7 +40,6 @@ public class ChatService {
 
         } catch (Exception e) {
             System.out.println("💥 [getInitialGreeting] FastAPI 요청 실패");
-            e.printStackTrace();
             throw new RuntimeException("FastAPI 오류: " + e.getMessage());
         }
     }
@@ -101,7 +100,6 @@ public class ChatService {
             System.out.println("✅ [endChat] 일일 분석 리포트 요청 완료: " + response.getStatusCode());
         } catch (Exception e) {
             System.out.println("❌ [endChat] 일일 분석 리포트 요청 실패: " + e.getMessage());
-            e.printStackTrace();
         }
 
         // ✅ Step 2: 월간 요약 리포트 요청 (FastAPI가 DB에 저장)
@@ -125,7 +123,6 @@ public class ChatService {
 
         } catch (Exception e) {
             System.out.println("❌ [endChat] 월간 요약 요청 실패: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
