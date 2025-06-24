@@ -9,6 +9,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,24 +113,44 @@ public class ChatService {
      * 채팅 종료 및 리포트 요청
      */
     public void endChat(String token) {
-        System.out.println("✅ [endChat] 채팅 종료 요청 시작");
+        System.out.println("✅ [endChat] 채팅 종료 및 월간 요약 요청 시작");
 
+        // 🔐 JWT에서 userId 추출
         String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
-        System.out.println("🔑 [endChat] 파싱된 JWT: " + jwt);
-
         String userId = jwtUtil.getUserIdFromToken(jwt);
         System.out.println("👤 [endChat] 추출된 userId: " + userId);
 
-        // ✅ user_id를 쿼리 파라미터로 전송
-        String url = "http://192.168.219.48:8000/api/session/end?user_id=" + userId;
-        System.out.println("🌐 [endChat] 호출할 FastAPI URL: " + url);
-
+        // ✅ Step 1: 채팅 종료 요청
+        String endChatUrl = "http://192.168.219.48:8000/api/session/end?user_id=" + userId;
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(url, null, String.class);
-            System.out.println("✅ [endChat] FastAPI 응답 상태: " + response.getStatusCode());
-            System.out.println("✅ [endChat] FastAPI 응답 내용: " + response.getBody());
+            ResponseEntity<String> response = restTemplate.postForEntity(endChatUrl, null, String.class);
+            System.out.println("✅ [endChat] 채팅 종료 응답: " + response.getStatusCode());
         } catch (Exception e) {
-            System.out.println("❌ [endChat] FastAPI 호출 실패: " + e.getMessage());
+            System.out.println("❌ [endChat] 채팅 종료 실패: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // ✅ Step 2: 월간 요약 리포트 요청 (FastAPI가 DB에 저장)
+        try {
+            LocalDate now = LocalDate.now();
+            int year = now.getYear();
+            int month = now.getMonthValue();
+
+            String summaryUrl = String.format(
+                    "http://192.168.219.48:8000/api/reports/monthly/%d/%d", year, month
+            );
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            Map<String, String> body = Map.of("user_id", userId);
+            HttpEntity<Map<String, String>> request = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> summaryResponse = restTemplate.postForEntity(summaryUrl, request, String.class);
+            System.out.println("📦 [endChat] 월간 요약 요청 응답: " + summaryResponse.getStatusCode());
+            System.out.println("📄 [endChat] 응답 본문: " + summaryResponse.getBody());
+
+        } catch (Exception e) {
+            System.out.println("❌ [endChat] 월간 요약 요청 실패: " + e.getMessage());
             e.printStackTrace();
         }
     }
