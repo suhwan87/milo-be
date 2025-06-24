@@ -3,6 +3,7 @@ package com.example.milo_be.service;
 import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.domain.entity.RecoveryFolder;
 import com.example.milo_be.domain.entity.RecoverySentence;
+import com.example.milo_be.dto.RecoveryStorageRequestDto;
 import com.example.milo_be.dto.RecoveryStorageResponseDto;
 import com.example.milo_be.repository.RecoveryFolderRepository;
 import com.example.milo_be.repository.RecoverySentenceRepository;
@@ -43,6 +44,19 @@ public class RecoveryStorageService {
                 .build();
     }
 
+    // ✅ 2. 사용자 폴더 수정
+    public void updateFolderName(User user, Long folderId, String updatedName) {
+        RecoveryFolder folder = recoveryFolderRepository.findByFolderIdAndUser(folderId, user)
+                .orElseThrow(() -> new IllegalArgumentException("폴더가 존재하지 않습니다."));
+
+        if (recoveryFolderRepository.existsByUserAndFolderName(user, updatedName)) {
+            throw new IllegalArgumentException("이미 존재하는 폴더 이름입니다.");
+        }
+
+        folder.setFolderName(updatedName);
+        recoveryFolderRepository.save(folder);
+    }
+    
     // ✅ 2. 사용자 폴더 삭제
     @Transactional
     public void deleteFolder(User user, Long folderId) {

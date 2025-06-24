@@ -24,6 +24,7 @@ public class RecoveryFolder {
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
+    @Setter
     @Column(name = "FOLDER_NAME", nullable = false, length = 100)
     private String folderName;
 

@@ -41,6 +41,26 @@ public class RecoveryStorageController {
         }
     }
 
+    // ✅ 2. 사용자 폴더 수정
+    @PutMapping("/folder/update")
+    public ResponseEntity<?> updateFolder(
+            @RequestHeader("Authorization") String token,
+            @RequestBody RecoveryStorageRequestDto.RecoveryFolderUpdateRequest request) {
+        try {
+            String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+            String userId = jwtUtil.getUserIdFromToken(jwt);
+            User user = userRepository.findById(userId).orElseThrow();
+
+            recoveryStorageService.updateFolderName(user, request.getFolderId(), request.getUpdatedName());
+
+            return ResponseEntity.ok("수정 완료");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("폴더 수정 실패");
+        }
+    }
+
     // ✅ 2. 사용자 폴더 삭제
     @DeleteMapping("/folder")
     public ResponseEntity<?> deleteFolder(
