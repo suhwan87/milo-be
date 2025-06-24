@@ -1,7 +1,6 @@
 package com.example.milo_be.service;
 
 import com.example.milo_be.JWT.JwtUtil;
-import com.example.milo_be.domain.entity.User;
 import com.example.milo_be.dto.ChatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
