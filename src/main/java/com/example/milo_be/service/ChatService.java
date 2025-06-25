@@ -4,6 +4,7 @@ import com.example.milo_be.JWT.JwtUtil;
 import com.example.milo_be.dto.ChatDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -85,6 +86,7 @@ public class ChatService {
     /**
      * 채팅 종료 시 리포트 요청
      */
+    @Async
     public void endChat(String token) {
         System.out.println("✅ [endChat] 일일 감정 리포트 저장 및 월간 요약 요청 시작");
 

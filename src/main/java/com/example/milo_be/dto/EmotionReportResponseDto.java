@@ -4,6 +4,7 @@ import com.example.milo_be.domain.entity.DailyEmotionReport;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ public class EmotionReportResponseDto {
     @AllArgsConstructor
     public static class DailyReport {
         private LocalDate date;
+        private LocalDateTime createdAt;
         private String mainEmotion;
         private float score;
         private float stable;
@@ -32,6 +34,7 @@ public class EmotionReportResponseDto {
         public static DailyReport from(DailyEmotionReport report) {
             return DailyReport.builder()
                     .date(report.getDate())
+                    .createdAt(report.getCreatedAt())
                     .mainEmotion(report.getMainEmotion())
                     .score(report.getScore())
                     .stable(report.getStable())
