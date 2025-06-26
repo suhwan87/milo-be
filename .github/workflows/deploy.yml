@@ -22,7 +22,8 @@ jobs:
           script: |
             export FASTAPI_BASE_URL=http://211.188.57.245:8000
             cd /root/milo-be
+            docker rm -f milo-be || true
             git pull origin master
             ./gradlew build
-            docker-compose -f /root/docker-compose.yml down
-            docker-compose -f /root/docker-compose.yml up -d --build
+            docker-compose -f /root/docker-compose.yml build backend
+            docker-compose -f /root/docker-compose.yml up -d backend
