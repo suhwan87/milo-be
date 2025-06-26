@@ -20,6 +20,7 @@ jobs:
           key: ${{ secrets.NCP_SSH_KEY }}
           port: 22
           script: |
+            export FASTAPI_BASE_URL=http://211.188.57.245:8000
             cd /root/milo-be
             git pull origin master
             ./gradlew build
