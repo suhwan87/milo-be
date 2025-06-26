@@ -1,6 +1,13 @@
 # 1. Java 17 JDK가 설치된 경량 리눅스 이미지 사용
 FROM openjdk:17-jdk-slim
 
+# Timezone 설정 추가
+ENV TZ=Asia/Seoul
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata \
+    && apt-get clean
+
 # 2. 컨테이너 내 작업 디렉토리 설정
 WORKDIR /app
 
