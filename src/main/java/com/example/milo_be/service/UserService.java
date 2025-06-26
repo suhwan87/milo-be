@@ -6,8 +6,7 @@ import com.example.milo_be.dto.LoginResponseDto;
 import com.example.milo_be.dto.UserReportStatusDto;
 import com.example.milo_be.dto.UserRequestDto;
 import com.example.milo_be.dto.UserResponseDto;
-import com.example.milo_be.repository.EmotionReportRepository;
-import com.example.milo_be.repository.UserRepository;
+import com.example.milo_be.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final EmotionReportRepository reportRepository; // ✅ 추가
+    private final RecoverySentenceRepository recoverySentenceRepository;
+    private final RecoveryFolderRepository recoveryFolderRepository;
+    private final EmotionReportRepository reportRepository;
+    private final MonthlyEmotionSummaryRepository monthlyEmotionSummaryRepository;
+    private final RoleCharacterRepository roleCharacterRepository;
+    private final RolePlayLogRepository rolePlayLogRepository;
+    private final ChatLogRepository chatLogRepository;
+
+
+
+
 
     /**
      * 회원가입 처리
@@ -129,5 +138,25 @@ public class UserService {
         boolean hasTodayReport = reportRepository.existsByUserAndDate(user, today);
 
         return new UserReportStatusDto(isNewUser, hasAnyReport, hasTodayReport);
+    }
+
+
+    /**
+     * 유저 앱 초기화
+     */
+    public void resetUserData(String userId) {
+        // 마음서랍장 폴더, 문장 삭제
+        recoverySentenceRepository.deleteByUser_UserId(userId);
+        recoveryFolderRepository.deleteByUser_UserId(userId);
+        // 리포트 삭제
+        reportRepository.deleteByUser_UserId(userId);
+        monthlyEmotionSummaryRepository.deleteByUser_UserId(userId);
+
+        // 역할극 삭제
+        rolePlayLogRepository.deleteByUser_UserId(userId);
+        roleCharacterRepository.deleteByUser_UserId(userId);
+
+        // 채팅 로그
+        chatLogRepository.deleteByUser_UserId(userId);
     }
 }

@@ -16,4 +16,7 @@ public interface RoleCharacterRepository extends JpaRepository<RoleCharacter, Lo
 
     Optional<RoleCharacter> findByUser_UserId(String userId);
 
+    // 사용자 ID에 해당하는 모든 데이터를 삭제
+    void deleteByUser_UserId(String userId);
+
 }

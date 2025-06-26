@@ -9,4 +9,7 @@ import java.util.Optional;
 
 public interface MonthlyEmotionSummaryRepository extends JpaRepository<MonthlyEmotionSummary, Long> {
     Optional<MonthlyEmotionSummary> findByUserAndYearMonths(User user, LocalDate yearMonths);
+
+    // 사용자 ID에 해당하는 모든 데이터를 삭제
+    void deleteByUser_UserId(String userId);
 }

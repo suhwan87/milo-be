@@ -6,6 +6,8 @@ import com.example.milo_be.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -141,5 +143,35 @@ public class UserController {
         String userId = jwtUtil.getUserIdFromToken(jwt);
         UserReportStatusDto status = userService.getUserReportStatus(userId);
         return ResponseEntity.ok(status);
+    }
+
+    /**
+     * 유저 앱 초기화
+     */
+    @Transactional
+    @DeleteMapping("/reset")
+    public ResponseEntity<?> resetUserApp(@RequestHeader("Authorization") String token) {
+        System.out.println("[앱초기화 요청 수신됨]");
+
+        try {
+            String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
+            String userId = jwtUtil.getUserIdFromToken(jwt);
+
+            System.out.println("→ userId = " + userId); // ✅ 사용자 확인
+
+            userService.resetUserData(userId);
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "message", "앱 데이터가 초기화되었습니다"
+            ));
+        } catch (Exception e) {
+            System.out.println("[앱초기화 예외 발생] " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "status", "error",
+                    "message", "앱 초기화 중 오류가 발생했어요"
+            ));
+        }
     }
 }

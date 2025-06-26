@@ -15,6 +15,9 @@ import java.util.Optional;
 @Repository
 public interface EmotionReportRepository extends JpaRepository<DailyEmotionReport, Long> {
 
+    // 사용자 ID에 해당하는 모든 데이터를 삭제
+    void deleteByUser_UserId(String userId);
+
     /**
      * 특정 사용자와 날짜로 리포트를 조회
      */
