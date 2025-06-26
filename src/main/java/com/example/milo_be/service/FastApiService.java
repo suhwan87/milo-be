@@ -6,6 +6,7 @@ import com.example.milo_be.dto.RolePlayRequestDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,31 +20,26 @@ public class FastApiService {
     private final RestTemplate restTemplate;
     private final RoleCharacterRepository roleCharacterRepository;
 
-    private static final String CHAT_URL = "http://192.168.219.48:8000/api/roleplay/chat";
+    @Value("${fastapi.base-url}")
+    private String fastApiBaseUrl;
 
-    /**
-     * ✅ 사용자 ID로 캐릭터 ID 조회 → FastAPI로 전달
-     */
     public String sendChatToFastAPI(String userId, String input) {
-        // 1. 역할 ID 조회 (1:1 관계 가정)
         RoleCharacter character = roleCharacterRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalStateException("등록된 역할이 없습니다."));
 
-        // 2. FastAPI에 전달할 DTO 구성
         RolePlayRequestDto dto = new RolePlayRequestDto();
         dto.setUser_id(userId);
         dto.setCharacter_id(character.getCharacterId());
         dto.setInput(input);
 
-        // 3. HTTP 요청
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<RolePlayRequestDto> request = new HttpEntity<>(dto, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(CHAT_URL, request, String.class);
+            String url = fastApiBaseUrl + "/api/roleplay/chat";
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
-            // 응답 파싱
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.getBody());
             JsonNode outputNode = root.get("output");
@@ -56,3 +52,4 @@ public class FastApiService {
         }
     }
 }
+
