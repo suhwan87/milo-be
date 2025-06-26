@@ -23,5 +23,5 @@ jobs:
             cd /root/milo-be
             git pull origin master
             ./gradlew build
-            docker compose -f /root/docker-compose.yml down
-            docker compose -f /root/docker-compose.yml up -d --build
+            docker-compose -f /root/docker-compose.yml down
+            docker-compose -f /root/docker-compose.yml up -d --build
