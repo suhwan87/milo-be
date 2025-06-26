@@ -1,0 +1,27 @@
+name: Deploy to NCP
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to NCP via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USER }}
+          key: ${{ secrets.NCP_SSH_KEY }}
+          port: 22
+          script: |
+            cd /root/milo-be
+            git pull origin master
+            ./gradlew build
+            docker compose -f /root/docker-compose.yml down
+            docker compose -f /root/docker-compose.yml up -d --build
