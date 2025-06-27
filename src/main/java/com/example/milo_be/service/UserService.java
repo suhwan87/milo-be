@@ -151,7 +151,7 @@ public class UserService {
             throw new IllegalArgumentException("일치하는 사용자가 없습니다.");
         }
         User user = optionalUser.get();
-        String tempPassword = generateRandomPassword(8); // 8자리 랜덤 비밀번호
+        String tempPassword = generateRandomPassword(); // 8자리 랜덤 비밀번호
         String encodedPassword = passwordEncoder.encode(tempPassword);
         user.setPassword(encodedPassword);
         userRepository.save(user);
@@ -160,11 +160,11 @@ public class UserService {
     }
 
     // 랜덤 비밀번호 생성 함수
-    private String generateRandomPassword(int length) {
+    private String generateRandomPassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#";
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < 8; i++) {
             sb.append(chars.charAt(random.nextInt(chars.length())));
         }
         return sb.toString();
