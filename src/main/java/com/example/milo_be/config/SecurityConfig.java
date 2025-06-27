@@ -19,25 +19,25 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    // ✅ 비밀번호 암호화 Bean 등록
+    // 비밀번호 암호화 Bean 등록 (BCrypt 사용)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ Spring Security 필터 체인 구성
+    // Spring Security 필터 체인 구성
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())  // ✅ CORS 활성화 (withDefaults()가 핵심)
-                .csrf(csrf -> csrf.disable())
+                .cors(withDefaults())  // CORS 활성화 (withDefaults()가 핵심)
+                .csrf(csrf -> csrf.disable())  // CSRF 비활성화 (API용)
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll());
 
         return http.build();
     }
 
-    // ✅ CORS 정책 정의 (배포 & 로컬 환경 모두 대응)
+    // CORS 정책 정의 (배포 & 로컬 환경 대응)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

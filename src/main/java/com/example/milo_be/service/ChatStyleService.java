@@ -7,24 +7,24 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 사용자 챗봇 대화 스타일 관리 서비스
+ * - 공감형 / 조언형 프롬프트 조회 및 변경
+ */
 @Service
 @RequiredArgsConstructor
 public class ChatStyleService {
 
     private final UserRepository userRepository;
 
-    /**
-     * 챗봇 대화 스타일 조회
-     */
+    // 챗봇 대화 스타일 조회
     public String getPromptType(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자가 존재하지 않습니다."));
         return user.getEmotionPrompt() == 0 ? "emotional" : "practical";
     }
 
-    /**
-     * 챗봇 대화 스타일 변경
-     */
+    // 챗봇 대화 스타일 변경
     @Transactional
     public void updatePrompt(String userId, int promptValue) {
         User user = userRepository.findById(userId)

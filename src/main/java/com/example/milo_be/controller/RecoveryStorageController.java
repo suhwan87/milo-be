@@ -23,7 +23,7 @@ public class RecoveryStorageController {
     private final UserRepository userRepository;
     private final RecoveryFolderRepository recoveryFolderRepository;
 
-    // ✅ 1. 사용자 폴더 생성
+    // 사용자 폴더 생성
     @PostMapping("/folder/create")
     public ResponseEntity<?> createFolder(
             @RequestBody RecoveryStorageRequestDto.RecoveryFolderCreateRequest request,
@@ -37,11 +37,11 @@ public class RecoveryStorageController {
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage()); // ✅ 400 응답 + 메시지
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    // ✅ 2. 사용자 폴더 수정
+    // 사용자 폴더 수정
     @PutMapping("/folder/update")
     public ResponseEntity<?> updateFolder(
             @RequestHeader("Authorization") String token,
@@ -61,7 +61,7 @@ public class RecoveryStorageController {
         }
     }
 
-    // ✅ 2. 사용자 폴더 삭제
+    // 사용자 폴더 삭제
     @DeleteMapping("/folder")
     public ResponseEntity<?> deleteFolder(
             @RequestHeader("Authorization") String token,
@@ -81,7 +81,7 @@ public class RecoveryStorageController {
         }
     }
 
-    // ✅ 3. 사용자 폴더 전체 조회
+    // 사용자 폴더 전체 조회
     @GetMapping("/folders")
     public ResponseEntity<?> getUserFolders(@RequestHeader("Authorization") String token) {
         String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
@@ -91,7 +91,7 @@ public class RecoveryStorageController {
         return ResponseEntity.ok(folders);
     }
 
-    // ✅ 4. 회복 문장 저장
+    // 회복 문장 저장
     @PostMapping("/sentence")
     public ResponseEntity<?> saveSentence(
             @RequestHeader("Authorization") String token,
@@ -112,7 +112,7 @@ public class RecoveryStorageController {
         return ResponseEntity.ok(saved);
     }
 
-    // ✅ 5. 채팅 - 회복 문장 전체 삭제
+    // 채팅 - 회복 문장 전체 삭제
     @DeleteMapping("/sentence")
     public ResponseEntity<?> deleteSentence(
             @RequestHeader("Authorization") String token,
@@ -127,7 +127,7 @@ public class RecoveryStorageController {
         return ResponseEntity.ok("모든 폴더에서 문장이 삭제되었습니다.");
     }
 
-    // ✅ 6. 마음서랍장 - 회복 문장 하나 삭제
+    // 마음서랍장 - 회복 문장 하나 삭제
     @DeleteMapping("/sentence/folder")
     public ResponseEntity<?> deleteSentenceInFolder(
             @RequestHeader("Authorization") String token,
@@ -142,7 +142,7 @@ public class RecoveryStorageController {
         return ResponseEntity.ok("폴더에서 문장이 삭제되었습니다.");
     }
 
-    // ✅ 7. 폴더별 회복 문장 조회
+    // 폴더별 회복 문장 조회
     @GetMapping("/sentence/{folderId}")
     public ResponseEntity<?> getSentenceByFolder(
             @RequestHeader("Authorization") String token,
@@ -159,7 +159,7 @@ public class RecoveryStorageController {
         return ResponseEntity.ok(sentenceList);
     }
 
-    // ✅ 8. 회복 문장 수정
+    // 회복 문장 수정
     @PutMapping("/sentence/update")
     public ResponseEntity<?> updateSentenceInFolder(
             @RequestHeader("Authorization") String token,

@@ -13,9 +13,7 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    /**
-     * 채팅 첫 진입 인사
-     */
+    // 채팅 첫 진입 인사
     @GetMapping("/chat/init")
     public ResponseEntity<?> getInitialGreeting(@RequestParam("user_id") String userId) {
         try {
@@ -27,9 +25,7 @@ public class ChatController {
         }
     }
 
-    /**
-     * 채팅
-     */
+    // 채팅
     @PostMapping("/chat/send")
     public ResponseEntity<?> sendMessage(
             @RequestHeader("Authorization") String token,
@@ -43,9 +39,7 @@ public class ChatController {
         }
     }
 
-    /**
-     * 채팅 종료 및 리포트 요청
-     */
+    // 채팅 종료 및 리포트 요청
     @PostMapping("/session/end")
     public ResponseEntity<?> endChat(@RequestHeader("Authorization") String token) {
         chatService.endChat(token);

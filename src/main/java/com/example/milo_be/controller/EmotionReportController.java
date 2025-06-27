@@ -21,9 +21,7 @@ public class EmotionReportController {
 
     private final EmotionReportService reportService;
 
-    /**
-     * [GET] 하루 감정 리포트 조회
-     */
+    // 하루 감정 리포트 조회
     @GetMapping("/daily")
     public ResponseEntity<?> getDailyReport(
             @RequestHeader("Authorization") String token,
@@ -41,7 +39,7 @@ public class EmotionReportController {
     }
 
     /**
-     * [GET] 특정 월에 감정 리포트가 존재하는 날짜(day) 목록 조회
+     * 특정 월에 감정 리포트가 존재하는 날짜(day) 목록 조회
      * @param token Authorization 헤더
      * @param month YYYY-MM 형식 (예: 2025-06)
      */
@@ -60,11 +58,7 @@ public class EmotionReportController {
         }
     }
 
-    // src/main/java/com/example/milo_be/controller/EmotionReportController.java
-    /**
-     * [GET] 특정 월의 날짜 + 대표 감정 목록 조회
-     *  ex) /api/report/records?month=2025-06
-     */
+    // 특정 월의 날짜 + 대표 감정 목록 조회
     @GetMapping("/records")
     public ResponseEntity<?> getDayEmotionRecords(
             @RequestHeader("Authorization") String token,
@@ -72,7 +66,7 @@ public class EmotionReportController {
         try {
             String jwt = token.replace("Bearer", "").trim();
             List<DayEmotionDto> list = reportService.getDayEmotionInMonth(jwt, month);
-            return ResponseEntity.ok(list);          // 200 OK, JSON 배열
+            return ResponseEntity.ok(list);
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {

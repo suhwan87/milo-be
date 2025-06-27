@@ -6,14 +6,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+/**
+ * RoleCharacter 엔터티 전용 JPA Repository
+ */
 public interface RoleCharacterRepository extends JpaRepository<RoleCharacter, Long> {
-
-    // ✅ 특정 사용자에 대해 등록된 역할이 있는지 조회 (1인 1캐릭터 제약용)
+    // 특정 사용자에 대한 역할 캐릭터 조회
     Optional<RoleCharacter> findByUser(User user);
 
-    // RoleCharacterRepository.java
+    // 사용자 ID 기준 역할 캐릭터 존재 여부 확인
     boolean existsByUser_UserId(String userId);
 
+    // 사용자 ID 기준 역할 캐릭터 조회
     Optional<RoleCharacter> findByUser_UserId(String userId);
 
     // 사용자 ID에 해당하는 모든 데이터를 삭제

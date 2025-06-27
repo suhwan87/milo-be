@@ -19,27 +19,21 @@ public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    /**
-     * 회원가입 요청
-     */
+    // 회원가입 요청
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRequestDto dto) {
         userService.registerUser(dto);
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
     }
 
-    /**
-     * 아이디 중복 확인 요청
-     */
+    // 아이디 중복 확인 요청
     @GetMapping("/check-id")
     public ResponseEntity<Boolean> checkUserId(@RequestParam String id) {
         boolean isAvailable = userService.isUserIdAvailable(id);
         return ResponseEntity.ok(isAvailable);
     }
 
-    /**
-     * 로그인 요청
-     */
+    // 로그인 요청
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginDto) {
         LoginResponseDto response = userService.login(loginDto.getUserId(), loginDto.getPassword());
@@ -47,9 +41,7 @@ public class UserController {
     }
 
 
-    /**
-     * 회원탈퇴 요청 (비밀번호 확인 포함)
-     */
+    // 회원탈퇴 요청 (비밀번호 확인 포함)
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(
             @RequestHeader("Authorization") String token,
@@ -74,9 +66,7 @@ public class UserController {
         }
     }
 
-    /**
-     * 닉네임 변경 요청
-     */
+    // 닉네임 변경 요청
     @PatchMapping("/nickname")
     public ResponseEntity<String> updateNickname(
             @RequestHeader("Authorization") String token,
@@ -85,7 +75,7 @@ public class UserController {
         try {
             String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
             String userId = jwtUtil.getUserIdFromToken(jwt);
-            String newNickname = requestDto.getNickname();  // ✅ DTO에서 가져오기
+            String newNickname = requestDto.getNickname();
 
             userService.updateNickname(userId, newNickname);
             return ResponseEntity.ok("닉네임이 성공적으로 변경되었습니다.");
@@ -96,9 +86,7 @@ public class UserController {
         }
     }
 
-    /**
-     * 회원 정보 요청
-     */
+    // 회원 정보 요청
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getUserInfo(@RequestHeader("Authorization") String token) {
         try {
@@ -111,9 +99,7 @@ public class UserController {
         }
     }
 
-    /**
-     * 회원 비밀번호 변경 요청
-     */
+    // 회원 비밀번호 변경 요청
     @PatchMapping("/password")
     public ResponseEntity<String> changePassword(
             @RequestHeader("Authorization") String token,
@@ -133,9 +119,7 @@ public class UserController {
         }
     }
 
-    /**
-     * 사용자 리포트 상태 확인 (신규가입자, 리포트 경험, 오늘 리포트 여부)
-     */
+    // 사용자 리포트 상태 확인 (신규가입자, 리포트 경험, 오늘 리포트 여부)
     @GetMapping("/status")
     public ResponseEntity<UserReportStatusDto> getUserStatus(@RequestHeader("Authorization") String token) {
         String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;

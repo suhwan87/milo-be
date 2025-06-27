@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 public class EmotionSummaryController {
 
     private final EmotionSummaryService emotionSummaryService;
-    private final JwtUtil jwtUtil;  // ✅ JWT 유틸 주입
+    private final JwtUtil jwtUtil;
 
+    // 사용자 월별 감정 요약 조회
     @GetMapping("/monthly-summary")
     public ResponseEntity<MonthlyEmotionResponse> getMonthlySummary(
             @RequestHeader("Authorization") String token,
             @RequestParam String yearMonth) {
 
-        // ✅ JWT 토큰에서 userId 추출
         String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
         String userId = jwtUtil.getUserIdFromToken(jwt);
 
