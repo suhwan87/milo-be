@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -128,9 +130,7 @@ public class UserController {
         return ResponseEntity.ok(status);
     }
 
-    /**
-     * 유저 앱 초기화
-     */
+    // 유저 앱 초기화
     @Transactional
     @DeleteMapping("/reset")
     public ResponseEntity<?> resetUserApp(@RequestHeader("Authorization") String token) {
@@ -156,5 +156,28 @@ public class UserController {
                     "message", "앱 초기화 중 오류가 발생했어요"
             ));
         }
+    }
+
+    // 아이디 찾기
+    @PostMapping("/find-id")
+    public ResponseEntity<?> findId(@RequestBody FindUserDto.FindIdRequestDto request) {
+        try {
+            String userId = userService.findUserId(request);
+            return ResponseEntity.ok(Map.of("userId", userId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("일치하는 사용자를 찾을 수 없습니다.");
+        }
+    }
+
+    // 비밀번호 찾기 사용자 검증
+    @PostMapping("/verify-user")
+    public ResponseEntity<Map<String, String>> verifyUser(@RequestBody FindUserDto.FindPasswordRequestDto dto) {
+
+            String tempPassword = userService.generateAndApplyTempPassword(dto);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("tempPassword", tempPassword);
+
+            return ResponseEntity.ok(response);
     }
 }

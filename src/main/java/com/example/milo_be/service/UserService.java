@@ -2,16 +2,15 @@ package com.example.milo_be.service;
 
 import com.example.milo_be.JWT.JwtUtil;
 import com.example.milo_be.domain.entity.User;
-import com.example.milo_be.dto.LoginResponseDto;
-import com.example.milo_be.dto.UserReportStatusDto;
-import com.example.milo_be.dto.UserRequestDto;
-import com.example.milo_be.dto.UserResponseDto;
+import com.example.milo_be.dto.*;
 import com.example.milo_be.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * 사용자 회원 관리 서비스
@@ -134,5 +133,40 @@ public class UserService {
         rolePlayLogRepository.deleteByUser_UserId(userId);
         roleCharacterRepository.deleteByUser_UserId(userId);
         chatLogRepository.deleteByUser_UserId(userId);
+    }
+
+    // 아이디 찾기
+    public String findUserId(FindUserDto.FindIdRequestDto request) {
+        return userRepository.findByNicknameAndEmail(request.getNickname(), request.getEmail())
+                .map(User::getUserId)
+                .orElseThrow(() -> new RuntimeException("일치하는 사용자를 찾을 수 없습니다."));
+    }
+
+    // 비밀번호 찾기
+    public String generateAndApplyTempPassword(FindUserDto.FindPasswordRequestDto dto) {
+        Optional<User> optionalUser = userRepository.findByNicknameAndUserIdAndEmail(
+                dto.getNickname(), dto.getUserId(), dto.getEmail()
+        );
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("일치하는 사용자가 없습니다.");
+        }
+        User user = optionalUser.get();
+        String tempPassword = generateRandomPassword(8); // 8자리 랜덤 비밀번호
+        String encodedPassword = passwordEncoder.encode(tempPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        return tempPassword;
+    }
+
+    // 랜덤 비밀번호 생성 함수
+    private String generateRandomPassword(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 }
