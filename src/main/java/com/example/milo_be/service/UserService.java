@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+/**
+ * 사용자 회원 관리 서비스
+ * - 회원가입, 로그인, 탈퇴, 비밀번호 변경, 리포트 상태 확인
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -21,11 +25,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final EmotionReportRepository reportRepository; // ✅ 추가
+    private final EmotionReportRepository reportRepository;
 
-    /**
-     * 회원가입 처리
-     */
+    // 회원가입 처리
     public void registerUser(UserRequestDto dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
@@ -42,16 +44,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    /**
-     * 아이디 중복 체크
-     */
+    // 아이디 중복 체크
     public boolean isUserIdAvailable(String userId) {
         return !userRepository.existsById(userId);
     }
 
-    /**
-     * 로그인 처리 및 JWT 발급
-     */
+    // 로그인 처리 및 JWT 발급
     public LoginResponseDto login(String userId, String password) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -64,14 +62,11 @@ public class UserService {
         return new LoginResponseDto(token, userId);
     }
 
-    /**
-     * 회원탈퇴 (비밀번호 확인 포함)
-     */
+    // 회원탈퇴 (비밀번호 확인 포함)
     public boolean deleteUserWithPassword(String userId, String password) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        // 비밀번호 확인
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return false;
         }
@@ -80,9 +75,7 @@ public class UserService {
         return true;
     }
 
-    /**
-     * 닉네임 변경
-     */
+    // 닉네임 변경
     public void updateNickname(String userId, String newNickname) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
@@ -91,9 +84,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    /**
-     * 현재 로그인한 사용자 정보 반환 (GET /api/users/me)
-     */
+    // 현재 로그인한 사용자 정보 반환
     public UserResponseDto getUserInfo(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
@@ -101,9 +92,7 @@ public class UserService {
         return new UserResponseDto(user.getUserId(), user.getNickname(), user.getEmail());
     }
 
-    /**
-     * 회원 비밀번호 변경
-     */
+    // 회원 비밀번호 변경
     public void changePassword(String userId, String currentPassword, String newPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
@@ -116,9 +105,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    /**
-     * 사용자 리포트 상태 확인 (신규가입자, 리포트 경험, 오늘 리포트 여부)
-     */
+    // 사용자 리포트 상태 확인 (신규가입자, 리포트 경험, 오늘 리포트 여부)
     public UserReportStatusDto getUserReportStatus(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));

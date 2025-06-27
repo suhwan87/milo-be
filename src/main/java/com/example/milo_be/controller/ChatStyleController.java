@@ -15,9 +15,7 @@ public class ChatStyleController {
     private final ChatStyleService chatStyleService;
     private final JwtUtil jwtUtil;
 
-    /**
-     * 챗봇 대화 스타일 조회
-     */
+    // 챗봇 대화 스타일 조회
     @GetMapping
     public ResponseEntity<String> getPromptType(@RequestHeader("Authorization") String token) {
         String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
@@ -27,9 +25,7 @@ public class ChatStyleController {
         return ResponseEntity.ok(promptType);
     }
 
-    /**
-     * 챗봇 대화 스타일 변경
-     */
+    // 챗봇 대화 스타일 변경
     @PutMapping
     public ResponseEntity<Void> updatePrompt(
             @RequestHeader("Authorization") String token,

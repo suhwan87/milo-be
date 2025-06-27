@@ -12,6 +12,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * FastAPI 역할극 대화 연동 서비스
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +26,7 @@ public class FastApiService {
     @Value("${fastapi.base-url}")
     private String fastApiBaseUrl;
 
+    // FastAPI에 역할극 대화 요청 보내기
     public String sendChatToFastAPI(String userId, String input) {
         RoleCharacter character = roleCharacterRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalStateException("등록된 역할이 없습니다."));

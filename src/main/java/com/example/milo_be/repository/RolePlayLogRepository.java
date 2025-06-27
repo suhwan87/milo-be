@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * RolePlayLog 엔터티 전용 JPA Repository
+ */
 public interface RolePlayLogRepository extends JpaRepository<RolePlayLog, Long> {
 
     // 사용자 ID를 기반으로 대화 로그 조회

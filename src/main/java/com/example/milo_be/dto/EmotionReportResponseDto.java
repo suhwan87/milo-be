@@ -6,13 +6,18 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 하루 감정 리포트 응답 DTO
+ * - DailyReport 내부 클래스 포함
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmotionReportResponseDto {
-    private DailyReport report; // ✅ 이 필드가 있으면 생성자 시그니처가 다르게 생성됨
+    private DailyReport report; // 감정 리포트 본문 응답 필드
 
+    // 실제 감정 리포트 정보 전달용 내부 DTO
     @Getter
     @Builder
     @NoArgsConstructor
@@ -31,6 +36,7 @@ public class EmotionReportResponseDto {
         private String feedback;
         private String encouragement;
 
+        // 엔터티 → DTO 변환 메서드
         public static DailyReport from(DailyEmotionReport report) {
             return DailyReport.builder()
                     .date(report.getDate())

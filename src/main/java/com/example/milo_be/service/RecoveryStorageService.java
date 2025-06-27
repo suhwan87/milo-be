@@ -14,6 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 회복 문장 보관함 서비스
+ * - 폴더/문장 생성, 수정, 삭제, 조회 처리
+ */
 @Service
 @RequiredArgsConstructor
 public class RecoveryStorageService {
@@ -21,7 +25,7 @@ public class RecoveryStorageService {
     private final RecoveryFolderRepository recoveryFolderRepository;
     private final RecoverySentenceRepository recoverySentenceRepository;
 
-    // ✅ 1. 사용자 폴더 생성
+    // 사용자 폴더 생성
     public RecoveryStorageResponseDto.RecoveryFolderResponse createFolder(User user, String folderName) {
         boolean exists = recoveryFolderRepository.existsByUserAndFolderName(user, folderName);
         if (exists) {
@@ -43,7 +47,7 @@ public class RecoveryStorageService {
                 .build();
     }
 
-    // ✅ 2. 사용자 폴더 수정
+    // 사용자 폴더명 수정
     public void updateFolderName(User user, Long folderId, String updatedName) {
         RecoveryFolder folder = recoveryFolderRepository.findByFolderIdAndUser(folderId, user)
                 .orElseThrow(() -> new IllegalArgumentException("폴더가 존재하지 않습니다."));
@@ -56,7 +60,7 @@ public class RecoveryStorageService {
         recoveryFolderRepository.save(folder);
     }
     
-    // ✅ 2. 사용자 폴더 삭제
+    // 사용자 폴더 삭제
     @Transactional
     public void deleteFolder(User user, Long folderId) {
         RecoveryFolder folder = recoveryFolderRepository.findById(folderId)
@@ -73,12 +77,12 @@ public class RecoveryStorageService {
         recoveryFolderRepository.delete(folder);
     }
 
-    // ✅ 3. 사용자 폴더 조회
+    // 사용자 폴더 조회
     public List<RecoveryStorageResponseDto.RecoveryFolderResponse> getFolders(User user) {
         return recoveryFolderRepository.findAllByUser(user)
                 .stream()
                 .map(folder -> {
-                    int sentenceCount = recoverySentenceRepository.countByFolder(folder); // ✅ 문장 개수 구하기
+                    int sentenceCount = recoverySentenceRepository.countByFolder(folder);
                     return RecoveryStorageResponseDto.RecoveryFolderResponse.builder()
                             .folderId(folder.getFolderId())
                             .folderName(folder.getFolderName())
@@ -89,7 +93,7 @@ public class RecoveryStorageService {
                 .toList();
     }
 
-    // ✅ 4 .회복 문장 저장
+    // 회복 문장 저장
     public RecoveryStorageResponseDto.RecoverySentenceResponse saveSentence(User user, RecoveryFolder folder, String content) {
         RecoverySentence sentence = recoverySentenceRepository.save(
                 RecoverySentence.builder()
@@ -108,7 +112,7 @@ public class RecoveryStorageService {
                 .build();
     }
 
-    // ✅ 5. 회복 문장 전체 삭제
+    // 회복 문장 전체 삭제
     @Transactional
     public void deleteSentenceFromAllFolders(User user, String content) {
         List<RecoverySentence> sentenceList =
@@ -121,7 +125,7 @@ public class RecoveryStorageService {
         recoverySentenceRepository.deleteAll(sentenceList);
     }
 
-    // ✅ 6. 마음서랍장 - 회복 문장 하나 삭제
+    // 특정 폴더 내 회복 문장 하나 삭제
     @Transactional
     public void deleteSentenceInFolder(User user, Long folderId,  Long sentenceId) {
         RecoveryFolder folder = recoveryFolderRepository.findByFolderIdAndUser(folderId, user)
@@ -136,10 +140,10 @@ public class RecoveryStorageService {
                 .orElseThrow(() -> new IllegalArgumentException("문장을 찾을 수 없습니다."));
 
 
-        recoverySentenceRepository.delete(sentence); // ✅ 정확히 하나만 삭제
+        recoverySentenceRepository.delete(sentence);
     }
 
-    // ✅ 7. 폴더별 회복 문장 조회
+    // 폴더별 회복 문장 조회
     public List<RecoveryStorageResponseDto.RecoverySentenceResponse> getSentenceByFolder(RecoveryFolder folder, User user) {
         return recoverySentenceRepository.findAllByFolderAndUser(folder, user)
                 .stream()
@@ -152,7 +156,7 @@ public class RecoveryStorageService {
                 .toList();
     }
 
-    // ✅ 8. 회복 문장 수정
+    // 회복 문장 수정
     @Transactional
     public void updateSentence(User user, Long sentenceId, String updatedContent) {
         RecoverySentence sentence = recoverySentenceRepository.findById(sentenceId)
