@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FastApiService {
+public class RolePlayChatService {
 
     private final RestTemplate restTemplate;
     private final RoleCharacterRepository roleCharacterRepository;

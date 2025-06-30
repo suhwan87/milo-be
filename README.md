@@ -11,8 +11,8 @@
 - [🖥 화면 구성 미리보기](#-화면-구성-미리보기)
 - [🛠 기술 스택](#-기술-스택)
 - [🧼 데이터 전처리 과정](#-데이터-전처리-과정)
-- [📂 FastAPI 서버 디렉토리 구조](#-fastapi-서버-디렉토리-구조)
-- [🛠 설치 및 실행 (AI 서버 FastAPI)](#-설치-및-실행-ai-서버-fastapi)
+- [📂 Spring 서버 디렉토리 구조](#-fastapi-서버-디렉토리-구조)
+- [🛠 설치 및 실행 (Spring Boot 백엔드 서버)](#-설치-및-실행-ai-서버-fastapi)
 - [📌 사용 예시](#-사용-예시)
 - [🤯 트러블슈팅 요약](#-트러블슈팅-요약)
 - [👨‍👩‍👧‍👦 팀원 역할](#-팀원-역할)
@@ -178,8 +178,8 @@ text,label
 - metadata에 입력에 대한 응답 등을 포함하여 qdrant 벡터 DB에 저장하여 rag에 활용
 ---
 
-## 📂 FastAPI 서버 디렉토리 구조
---> 프론트와 백엔드는 다른곳에 기록됨.
+## 📂 Spring(Intellij) 서버 디렉토리 구조
+--> 프론트와 AI는 다른곳에 기록됨.
 
 ```
 milo-be/
@@ -335,12 +335,12 @@ java -jar build/libs/milo-be-0.0.1-SNAPSHOT.jar
 
 ## 👨‍👩‍👧‍👦 팀원 역할
 
-| 이름 | 역할 | GitHub |
-|------|------|--------|
-| 김성하 | PM / 데이터 전처리 / DB 설계 / ERD 설계 / AI 모델링 / FastAPI 서버 | [@julle0123](https://github.com/julle0123) |
-| 정수한 | 데이터 수집 / 데이터 전처리 / 프롬프트 설계 / AI 모델링 / FastAPI 서버 | [@suhwan87](https://github.com/suhwan87) |
-| 김수환 | 프론트엔드 구현 / UI 구성 / 디자인 / Spring Boot API / DB 연동  | - |
-| 김서연 | 프론트엔드 구현 / UI 구성 / 디자인 /  Spring Boot API / DB 연동  | - |
+| 이름 | 역할 | GitHub                                       |
+|------|------|----------------------------------------------|
+| 김성하 | PM / 데이터 전처리 / DB 설계 / ERD 설계 / AI 모델링 / FastAPI 서버 | [@julle0123](https://github.com/julle0123)   |
+| 정수한 | 데이터 수집 / 데이터 전처리 / 프롬프트 설계 / AI 모델링 / FastAPI 서버 | [@s2-honey](https://github.com/s2-honey) |
+| 김수환 | 프론트엔드 구현 / UI 구성 / 디자인 / Spring Boot API / DB 연동  | [@suhwan87](https://github.com/suhwan87)     |
+| 김서연 | 프론트엔드 구현 / UI 구성 / 디자인 /  Spring Boot API / DB 연동  | [@kimseoyeon21](https://github.com/kimseoyeon21) |
 
 ---
 ## 📄 라이선스
