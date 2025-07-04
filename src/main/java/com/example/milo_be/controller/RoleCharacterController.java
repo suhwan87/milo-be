@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 역할극 캐릭터 생성/확인/삭제 컨트롤러
+ */
 @RestController
 @RequestMapping("/api/character")
 @RequiredArgsConstructor
@@ -29,11 +32,11 @@ public class RoleCharacterController {
         return ResponseEntity.ok(exists);
     }
 
-    // 역할 및 대화 로그 삭제
+    // 역할 및 대화 로그 + FastAPI 세션 삭제
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteCharacterAndLogs(@PathVariable String userId) {
-        rolePlayLogService.deleteRolePlayDataByUserId(userId); // 서비스에서 캐릭터+로그 함께 삭제
+        // 내부에서 FastAPI 연동까지 포함된 서비스 호출
+        rolePlayLogService.deleteRolePlayDataByUserId(userId);
         return ResponseEntity.noContent().build();
     }
 }
-
