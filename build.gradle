@@ -51,6 +51,9 @@ dependencies {
 
 	// Spring Security 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// JSON 파싱 안전성을 위해 명시적으로 추가
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 tasks.named('test') {

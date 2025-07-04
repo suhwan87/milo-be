@@ -12,4 +12,5 @@ import lombok.Getter;
 public class LoginResponseDto {
     private String token;   // JWT 토큰
     private String userId;  // 사용자 ID
+    private String nickname; // 닉네임
 }

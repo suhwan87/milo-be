@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     // 비밀번호 찾기: 닉네임 + 이메일 + userId → 사용자 존재 여부 확인
     Optional<User> findByNicknameAndUserIdAndEmail(String nickname, String userId, String email);
 
+    // 소셜 로그인
+    Optional<User> findByProviderAndProviderId(String provider, String providerId);
 }

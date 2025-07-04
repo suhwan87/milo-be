@@ -64,7 +64,7 @@ public class UserService {
         }
 
         String token = jwtUtil.generateToken(userId);
-        return new LoginResponseDto(token, userId);
+        return new LoginResponseDto(token, userId, user.getNickname());
     }
 
     // 회원탈퇴 (비밀번호 확인 포함)
@@ -72,7 +72,14 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        // ✅ 소셜 로그인 유저 → provider가 local이 아니면 비밀번호 확인 생략
+        if (user.getProvider() != null && !"local".equalsIgnoreCase(user.getProvider())) {
+            userRepository.delete(user);
+            return true;
+        }
+
+        // ✅ 일반 로그인 유저 → 비밀번호 검증 필요
+        if (password == null || !passwordEncoder.matches(password, user.getPassword())) {
             return false;
         }
 

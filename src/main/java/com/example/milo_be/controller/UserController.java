@@ -42,18 +42,19 @@ public class UserController {
     }
 
 
-    // 회원탈퇴 요청 (비밀번호 확인 포함)
+    // 회원탈퇴 요청 (일반 유저: 비밀번호 확인 / 소셜 유저: 바로 탈퇴)
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(
             @RequestHeader("Authorization") String token,
-            @RequestBody Map<String, String> requestBody
+            @RequestBody(required = false) Map<String, String> requestBody // ✅ requestBody optional
     ) {
         try {
             String jwt = token.startsWith("Bearer ") ? token.substring(7).trim() : token;
             String userId = jwtUtil.getUserIdFromToken(jwt);
-            String password = requestBody.get("password");
+            String password = requestBody != null ? requestBody.get("password") : null;
 
             boolean deleted = userService.deleteUserWithPassword(userId, password);
+
             if (deleted) {
                 return ResponseEntity.ok("회원탈퇴가 완료되었습니다.");
             } else {
@@ -61,11 +62,15 @@ public class UserController {
                         .body("비밀번호가 일치하지 않습니다.");
             }
 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("탈퇴 실패: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("회원탈퇴 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("서버 오류로 탈퇴에 실패했습니다.");
         }
     }
+
 
     // 닉네임 변경 요청
     @PatchMapping("/nickname")
