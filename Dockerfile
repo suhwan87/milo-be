@@ -14,8 +14,5 @@ WORKDIR /app
 # 3. JAR 파일을 복사 (Gradle 빌드 후 생성되는 파일 경로 기준)
 COPY build/libs/*.jar app.jar
 
-# 4. HTTPS 인증서 복사
-COPY ../nginx-ssl/keystore.p12 ./keystore.p12
-
-# 5. 컨테이너 실행 시 JAR 파일 실행
+# 4. 컨테이너 실행 시 JAR 파일 실행
 ENTRYPOINT ["java", "-jar", "app.jar"]
