@@ -29,31 +29,37 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())  // CORS 활성화 (withDefaults()가 핵심)
-                .csrf(csrf -> csrf.disable())  // CSRF 비활성화 (API용)
+                .cors(withDefaults())  // CORS 설정 활성화
+                .csrf(csrf -> csrf.disable())  // CSRF 비활성화 (API 서버용)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll());
+                        .anyRequest().permitAll());  // 모든 요청 허용 (JWT 필터에서 인증 처리 예정)
 
         return http.build();
     }
 
-    // CORS 정책 정의 (배포 & 로컬 환경 대응)
+    // CORS 정책 정의
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+
+        // 🔒 HTTPS 배포 도메인 추가
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://192.168.219.55:3000",
                 "http://192.168.219.184:3000",
-                "http://211.188.59.173:3000"
+                "http://211.188.59.173:3000",
+                "https://soswithmilo.site",
+                "https://www.soswithmilo.site"
         ));
+
+        config.setAllowCredentials(true); // 쿠키/인증정보 허용
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(Arrays.asList("*"));
-        config.setExposedHeaders(Arrays.asList("*"));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setExposedHeaders(Arrays.asList("Authorization")); // 응답에 포함된 헤더 노출 (필요 시)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }
