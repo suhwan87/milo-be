@@ -15,4 +15,4 @@ WORKDIR /app
 COPY build/libs/*.jar app.jar
 
 # 4. 컨테이너 실행 시 JAR 파일 실행
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=docker"]
