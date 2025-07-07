@@ -27,6 +27,12 @@ public class UserController {
         return ResponseEntity.ok("회원가입이 완료되었습니다.");
     }
 
+    // 이메일 중복 예외 처리
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+    }
+
     // 아이디 중복 확인 요청
     @GetMapping("/check-id")
     public ResponseEntity<Boolean> checkUserId(@RequestParam String id) {
