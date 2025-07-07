@@ -46,7 +46,8 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://192.168.219.55:3000",
                 "http://192.168.219.184:3000",
-                "http://211.188.59.173:3000"
+                "http://211.188.59.173:3000",
+                "http://soswithmilo.site"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("*"));
