@@ -44,9 +44,10 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
+                "http://192.168.219.65:3000",
                 "http://192.168.219.55:3000",
                 "http://192.168.219.184:3000",
-                "http://211.188.59.173:3000",
+                "http://107.23.62.0:3000",
                 "http://soswithmilo.site"
         ));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
