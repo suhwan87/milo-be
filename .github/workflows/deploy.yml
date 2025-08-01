@@ -1,29 +1,59 @@
-name: Deploy to NCP
+#name: Deploy to NCP
+#
+#on:
+#  push:
+#    branches: [ master ]
+#
+#jobs:
+#  deploy:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@v3
+#
+#      - name: Deploy to NCP via SSH
+#        uses: appleboy/ssh-action@v1.0.0
+#        with:
+#          host: ${{ secrets.NCP_HOST }}
+#          username: ${{ secrets.NCP_USER }}
+#          key: ${{ secrets.NCP_SSH_KEY }}
+#          port: 22
+#          script: |
+#            export FASTAPI_BASE_URL=http://211.188.57.245:8000
+#            cd /root/milo-be
+#            docker rm -f milo-be || true
+#            git pull origin master
+#            ./gradlew build
+#            docker-compose -f /root/docker-compose.yml build backend
+#            docker-compose -f /root/docker-compose.yml up -d backend
+
+
+name: Deploy Backend to AWS EC2
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to NCP via SSH
+      - name: Deploy to AWS EC2 via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.NCP_HOST }}
-          username: ${{ secrets.NCP_USER }}
-          key: ${{ secrets.NCP_SSH_KEY }}
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
           port: 22
           script: |
-            export FASTAPI_BASE_URL=http://211.188.57.245:8000
-            cd /root/milo-be
-            docker rm -f milo-be || true
+            export FASTAPI_BASE_URL=http://44.197.211.246:8000
+            cd ~/milo-be
             git pull origin master
             ./gradlew build
-            docker-compose -f /root/docker-compose.yml build backend
-            docker-compose -f /root/docker-compose.yml up -d backend
+            docker-compose -f ~/docker-compose.yml up -d --build milo-be
